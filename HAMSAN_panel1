@@ -1,0 +1,159 @@
+// HAMSAN Cloudflare Worker - PURE JAVASCRIPT ONLY
+// Save this directly as your Cloudflare Worker
+// No HTML, No CSS — Only backend logic
+
+export default {
+    async fetch(request, env) {
+        const url = new URL(request.url);
+        const method = request.method;
+
+        // KV namespaces
+        const USERS = env.USERS;
+        const CONFIGS = env.CONFIGS;
+        const ONLINE = env.ONLINE;
+
+        // ----------------------------
+        // REGISTER USER
+        // ----------------------------
+        if (url.pathname === "/register" && method === "POST") {
+            const data = await request.json();
+            await USERS.put(data.username, JSON.stringify({ password: data.password }));
+            return new Response("User Registered", { status: 200 });
+        }
+
+        // ----------------------------
+        // LOGIN
+        // ----------------------------
+        if (url.pathname === "/login" && method === "POST") {
+            const data = await request.json();
+            const user = await USERS.get(data.username, { type: "json" });
+
+            if (!user) return new Response("User Not Found", { status: 404 });
+            if (user.password !== data.password) return new Response("Wrong Password", { status: 403 });
+
+            await ONLINE.put(data.username, "online", { expirationTtl: 300 });
+            return new Response("OK", { status: 200 });
+        }
+
+        // ----------------------------
+        // ADD CONFIG
+        // ----------------------------
+        if (url.pathname === "/addConfig" && method === "POST") {
+            const data = await request.json();
+            await CONFIGS.put(data.name, data.content);
+            return new Response("Config Added", { status: 200 });
+        }
+
+        // ----------------------------
+        // GET CONFIGS
+        // ----------------------------
+        if (url.pathname === "/configs" && method === "GET") {
+            const list = await CONFIGS.list();
+            const arr = [];
+
+            for (const item of list.keys) {
+                const txt = await CONFIGS.get(item.name);
+                arr.push({ name: item.name, content: txt });
+            }
+
+            return new Response(JSON.stringify(arr), {
+                headers: { "content-type": "application/json" }
+            });
+        }
+
+        // ----------------------------
+        // ONLINE USERS
+        // ----------------------------
+        if (url.pathname === "/online" && method === "GET") {
+            const list = await ONLINE.list();
+            const users = list.keys.map(i => i.name);
+
+            return new Response(JSON.stringify(users), {
+                headers: { "content-type": "application/json" }
+            });
+        }
+
+        // DEFAULT RESPONSE
+        return new Response("HAMSAN WORKER IS RUNNING", { status: 200 });
+    }
+};
+``````javascript
+// HAMSAN Cloudflare Worker - PURE JAVASCRIPT ONLY
+// Save this directly as your Cloudflare Worker
+// No HTML, No CSS — Only backend logic
+
+export default {
+    async fetch(request, env) {
+        const url = new URL(request.url);
+        const method = request.method;
+
+        // KV namespaces
+        const USERS = env.USERS;
+        const CONFIGS = env.CONFIGS;
+        const ONLINE = env.ONLINE;
+
+        // ----------------------------
+        // REGISTER USER
+        // ----------------------------
+        if (url.pathname === "/register" && method === "POST") {
+            const data = await request.json();
+            await USERS.put(data.username, JSON.stringify({ password: data.password }));
+            return new Response("User Registered", { status: 200 });
+        }
+
+        // ----------------------------
+        // LOGIN
+        // ----------------------------
+        if (url.pathname === "/login" && method === "POST") {
+            const data = await request.json();
+            const user = await USERS.get(data.username, { type: "json" });
+
+            if (!user) return new Response("User Not Found", { status: 404 });
+            if (user.password !== data.password) return new Response("Wrong Password", { status: 403 });
+
+            await ONLINE.put(data.username, "online", { expirationTtl: 300 });
+            return new Response("OK", { status: 200 });
+        }
+
+        // ----------------------------
+        // ADD CONFIG
+        // ----------------------------
+        if (url.pathname === "/addConfig" && method === "POST") {
+            const data = await request.json();
+            await CONFIGS.put(data.name, data.content);
+            return new Response("Config Added", { status: 200 });
+        }
+
+        // ----------------------------
+        // GET CONFIGS
+        // ----------------------------
+        if (url.pathname === "/configs" && method === "GET") {
+            const list = await CONFIGS.list();
+            const arr = [];
+
+            for (const item of list.keys) {
+                const txt = await CONFIGS.get(item.name);
+                arr.push({ name: item.name, content: txt });
+            }
+
+            return new Response(JSON.stringify(arr), {
+                headers: { "content-type": "application/json" }
+            });
+        }
+
+        // ----------------------------
+        // ONLINE USERS
+        // ----------------------------
+        if (url.pathname === "/online" && method === "GET") {
+            const list = await ONLINE.list();
+            const users = list.keys.map(i => i.name);
+
+            return new Response(JSON.stringify(users), {
+                headers: { "content-type": "application/json" }
+            });
+        }
+
+        // DEFAULT RESPONSE
+        return new Response("HAMSAN WORKER IS RUNNING", { status: 200 });
+    }
+};
