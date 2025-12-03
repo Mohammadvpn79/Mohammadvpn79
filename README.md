@@ -16,6 +16,6 @@
 5. Binding: SA → HAMSAN_SD
 
 رمز کاربر: TixxxxDbgbvhf  
-رمز ادمین: 8800552vbvbccxvccc
+
 
 ⭐ ستاره بزن و شیر کن!
