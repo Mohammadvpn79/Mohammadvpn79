@@ -18,6 +18,9 @@ nano proxy_finder.sh
 
 اجرا :
 
+chmod +x proxy_finder.sh
+./proxy_finder.sh
+
 
 chmod +x proxy_finder.sh
 ./proxy_finder.sh
