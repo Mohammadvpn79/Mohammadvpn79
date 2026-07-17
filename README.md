@@ -1,10 +1,30 @@
-دستورات اجرا در ترماکس:
-آپدیت ترماکس
+
+دستور های ترماکس 
+
+
+اپدیت ترماکس 
+
+
 pkg update && pkg install -y curl jq parallel
-ساخت فایل :
+
+
+
+ساخت فایل
+
+
 nano proxy_finder.sh
-برای این که ip scanner کار کنه از یه vpn پرسرعت استفاده کن
-اجرا فقط در برنامه شیر و خورشید 
-برای اجرای Scanner:
-chmod +x clean_ip_scanner.sh
-./clean_ip_scanner.sh
+
+
+
+اجرا :
+
+
+chmod +x proxy_finder.sh
+./proxy_finder.sh
+
+
+
+نکته،:
+
+
+برای استفاده بدون مسکل حتما از یک فیلترشکن پرسرعت استفاده کنید 
