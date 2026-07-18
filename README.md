@@ -18,13 +18,10 @@ nano proxy_finder.sh
 
 اجرا :
 
-chmod +x proxy_finder.sh
-./proxy_finder.sh
 
 
-chmod +x proxy_finder.sh
-./proxy_finder.sh
-
+chmod +x clean_ip_scanner.sh
+./clean_ip_scanner.sh
 
 
 نکته،:
