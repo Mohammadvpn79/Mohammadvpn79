@@ -20,8 +20,8 @@ nano proxy_finder.sh
 
 
 
-chmod +x clean_ip_scanner.sh
-./clean_ip_scanner.sh
+chmod +x ip_scanner.sh
+./ip_scanner.sh
 
 
 نکته،:
