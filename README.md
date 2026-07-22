@@ -12,6 +12,15 @@ pkg install -y curl bc grep coreutils
 
 
 
-دستور اجرای فایل 
+دستور ذخیره فایل در شبیه ساز 
 
-$HOME/ip-scanner.sh
+
+nano $HOME/ip-scanner.sh
+
+
+
+اجرای ترماکس (فایل)
+
+
+./ip-scanner.sh
+
