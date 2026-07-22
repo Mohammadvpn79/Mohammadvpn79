@@ -1,1 +1,63 @@
+cat > ip-scanner.sh << 'EOF'
+#!/bin/bash
+echo "🚀 Starting Smart Proxy Scanner v4 (Fresh Scan)..."
 
+# Clear previous files for a completely fresh scan each time
+rm -f healthy_ips.txt best_lowping_ips.txt all_ips.txt list*.txt 2>/dev/null
+
+echo "📥 Downloading fresh proxies from multiple sources..."
+curl -s "https://api.proxyscrape.com/v4/free-proxy-list/get?request=displayproxies&protocol=http&timeout=20000&limit=500" -o list1.txt 2>/dev/null || true
+curl -s https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt -o list2.txt 2>/dev/null || true
+curl -s https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt -o list3.txt 2>/dev/null || true
+
+cat list*.txt 2>/dev/null | sed '/^$/d' | sort -u > all_ips.txt
+rm -f list*.txt
+
+total=$(wc -l < all_ips.txt)
+echo "📋 Loaded $total fresh proxies to test..."
+
+HEALTHY="healthy_ips.txt"
+BEST="best_lowping_ips.txt"
+> "$HEALTHY"
+> "$BEST"
+
+count=0
+while read -r ip; do
+    ((count++))
+    echo -ne "\r[$count/$total] Testing → $ip"
+    
+    # Two-stage test
+    if curl -s -x "http://$ip" --max-time 10 --connect-timeout 6 -I "https://www.google.com" > /dev/null 2>&1; then
+        echo "$ip" >> "$HEALTHY"
+        echo -e "\n✅ [GOOD] $ip"
+        
+        # Measure speed
+        time_taken=$(curl -s -x "http://$ip" --max-time 12 --connect-timeout 6 -w "%{time_total}" -o /dev/null "https://api.ipify.org" 2>/dev/null)
+        
+        # Check if number
+        if echo "\( time_taken" | grep -qE '^[0-9]+\.?[0-9]* \)' && (( $(echo "$time_taken < 4" | bc -l 2>/dev/null || echo 0) )); then
+            echo "$ip | ${time_taken}s" >> "$BEST"
+            echo "⭐ [BEST] \( ip ( \){time_taken}s)"
+        fi
+    fi
+done < all_ips.txt
+
+echo -e "\n\n=================================="
+echo "📊 Total Healthy IPs : $(wc -l < "$HEALTHY" 2>/dev/null || echo 0)"
+echo "⭐ Best Low Ping IPs : $(wc -l < "$BEST" 2>/dev/null || echo 0)"
+echo "=================================="
+
+if [ -s "$BEST" ]; then
+    sort -t'|' -k2 -n "$BEST" -o "$BEST"
+    echo "🏆 Top 10 Best Proxies:"
+    head -10 "$BEST"
+    echo ""
+    echo "📋 Copy best to clipboard:"
+    echo "cat $BEST | cut -d'|' -f1 | tr -d ' ' | termux-clipboard-set"
+else
+    echo "⚠️ No working low-ping proxies found right now."
+    echo "All healthy ones are saved in: $HEALTHY"
+fi
+
+echo -e "\n💡 Each run downloads completely fresh proxies."
+EOF
