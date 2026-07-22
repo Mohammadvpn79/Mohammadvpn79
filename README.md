@@ -19,8 +19,16 @@ nano $HOME/ip-scanner.sh
 
 
 
-اجرای ترماکس (فایل)
+
+اجرای دستور زیر 
+
+
+chmod +x ip-scanner.sh
+
+
+
+اجرای اسکنر :
+
 
 
 ./ip-scanner.sh
-
